@@ -40,6 +40,10 @@ GamePlayManager = {
             diamond.frame = game.rnd.integerInRange(0, 3); //se le da una img al azar entre 0 y 4
             //frac devuelve un numero entre 0 y 1
             diamond.scale.setTo(0.3 + game.rnd.frac()); // se randomiza la escala
+            diamond.anchor.setTo(0.5); //se desplaza el punto de apoyo de la imagen
+
+            diamond.x = game.rnd.integerInRange(50, 1050);
+            diamond.y = game.rnd.integerInRange(50, 600);
         }
 
     },
