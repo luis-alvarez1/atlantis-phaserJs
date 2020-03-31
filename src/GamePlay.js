@@ -31,11 +31,15 @@ GamePlayManager = {
         var distX = pointerX - this.horse.x; //se resta la coordenada en x con la del caballo en x
         var distY = pointerY - this.horse.y;
 
+        //se valida de qué lado estpa el mouse para voltear el caballo
         if (distX > 0) {
             this.horse.scale.setTo(1, 1);
         } else {
-            this.horse.scale.setTo(-1, 1)
+            this.horse.scale.setTo(-1, 1);
         }
+
+        this.horse.x += distX * 0.02;
+        this.horse.y += distY * 0.02;
     }
 };
 
