@@ -1,7 +1,7 @@
 var cant_diamantes = 30; //cantidad de diamantes en la pantalla
 GamePlayManager = {
     init: function() {
-        //instruccion para que la pantalla tome las domensiones actuales
+        //instruccion para que la pantalla tome las dimensiones actuales
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.scale.pageAlignHorizontally = true;
         game.scale.pageAlignVertically = true;
@@ -44,6 +44,23 @@ GamePlayManager = {
 
             diamond.x = game.rnd.integerInRange(50, 1050);
             diamond.y = game.rnd.integerInRange(50, 600);
+
+            this.diamonds[i] = diamond;
+
+            var rectCurrentDiamond = this.getBounds(diamond); // rectangulo del diamante actual
+            var rectHorse = this.getBounds(this.horse);
+
+            // mientras el rectangulo se sobreponga sobre algun otro elemento de la pantalla
+            while (this.isOverlapingOtherDiamond(i, rectCurrentDiamond) ||
+                this.isRectangleOverlapping(rectHorse, rectCurrentDiamond)) {
+
+                //se vuelve a cambiar de pos el diamante
+                diamond.x = game.rnd.integerInRange(50, 1050);
+                diamond.y = game.rnd.integerInRange(50, 600);
+
+                // se calcula el rectangulo del diamante actual
+                rectCurrentDiamond = this.getBounds(diamond);
+            }
         }
 
     },
@@ -52,6 +69,34 @@ GamePlayManager = {
 
         this.flagFirstMouseDown = true; //se cambia el valor del flag para ejecutar el juego
     },
+    //funcion que devuelve las dimensiones del diamante
+    getBounds: function(diamante_actual) {
+        return new Phaser.Rectangle(diamante_actual.left, diamante_actual.top,
+            diamante_actual.width, diamante_actual.height); // se devuelve un rectangulo con las dimensiones del diamante
+    },
+    //valida que el rectangulo no se sobre ponga con ningun sprite en la pantalla
+    isRectangleOverlapping: function(rect1, rect2) {
+
+        //se valida si los recangulos se tocan o se sobreponen y devuelve false si no es así
+        if (rect1.x > (rect2.x + rect2.width) || rect2.x > (rect1.x + rect1.width)) {
+            return false;
+        }
+        if (rect1.y > (rect2.y + rect2.height) || rect2.y > (rect1.y + rect1.height)) {
+            return false;
+        }
+        return true; // devuelve true si se tocan
+
+    },
+    isOverlapingOtherDiamond: function(index, rect2) {
+        for (var i = 0; i < index; i++) {
+            var rect1 = this.getBounds(this.diamonds[i]);
+            if (this.isRectangleOverlapping(rect1, rect2)) {
+                return true;
+            }
+        }
+        return false;
+    },
+
     update: function() {
 
         //SOLO SE EJECUTA EL CODIGO SI SE PRESIONÓ EL PRIMER CLICK
