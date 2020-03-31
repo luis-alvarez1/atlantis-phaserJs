@@ -1,3 +1,4 @@
+var cant_diamnates = 30; //cantidad de diamantes en la pantalla
 GamePlayManager = {
     init: function() {
         //instruccion para que la pantalla tome las domensiones actuales
@@ -10,7 +11,9 @@ GamePlayManager = {
     },
     preload: function() {
         game.load.image('background', 'assets/images/background.png'); //se carga una imagen
+        //('id','ruta',largo,ancho,#imagenes)
         game.load.spritesheet('horse', 'assets/images/horse.png', 84, 156, 2);
+        game.load.spritesheet('diamonds', 'assets/images/diamonds.png', 81, 84, 4);
     },
     create: function() {
         game.add.sprite(0, 0, 'background'); // se añade la imagen
@@ -27,6 +30,18 @@ GamePlayManager = {
         //alpha -> opacidad (x>0, x<1)
 
         game.input.onDown.add(this.onTap, this); //se llama la funcion y se asigna al objeto GamePlay con el this
+
+        this.diamonds = []; //array de diamantes
+
+        for (var i = 0; i < cant_diamates; i++) {
+            //(x,y,'id')
+            var diamond = game.add.sprite(100, 100, 'diamonts'); // se agregan a la pantalla
+
+            diamond.frame = game.rnd.integerInRange(0, 3); //se le da una img al azar entre 0 y 4
+            //frac devuelve un numero entre 0 y 1
+            diamond.scale.setTo(0.3 + game.rnd.frac()); // se randomiza la escala
+        }
+
     },
     //funcion que se llama al primer click
     onTap: function() {
