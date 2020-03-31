@@ -38,6 +38,9 @@ GamePlayManager = {
             this.horse.scale.setTo(-1, 1);
         }
 
+        // MOVIMIENTO DEL CABALLO
+        // se suma la distancia del mouse y se asigna a la del caballo para movero
+        // se porcentualiza para que no sea un movimiento bruzco
         this.horse.x += distX * 0.02;
         this.horse.y += distY * 0.02;
     }
