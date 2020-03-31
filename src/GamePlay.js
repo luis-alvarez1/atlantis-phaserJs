@@ -4,6 +4,9 @@ GamePlayManager = {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.scale.pageAlignHorizontally = true;
         game.scale.pageAlignVertically = true;
+
+        //variable que controla el movimiento y el inicio
+        this.flagFirstMouseDown = false;
     },
     preload: function() {
         game.load.image('background', 'assets/images/background.png'); //se carga una imagen
@@ -22,27 +25,39 @@ GamePlayManager = {
         this.horse.anchor.setTo(0.5);
 
         //alpha -> opacidad (x>0, x<1)
+
+        game.input.onDown.add(this.onTap, this); //se llama la funcion y se asigna al objeto GamePlay con el this
+    },
+    //funcion que se llama al primer click
+    onTap: function() {
+
+        this.flagFirstMouseDown = true; //se cambia el valor del flag para ejecutar el juego
     },
     update: function() {
-        //se reciben las coordenadas del mouse
-        var pointerX = game.input.x;
-        var pointerY = game.input.y;
 
-        var distX = pointerX - this.horse.x; //se resta la coordenada en x con la del caballo en x
-        var distY = pointerY - this.horse.y;
+        //SOLO SE EJECUTA EL CODIGO SI SE PRESIONÓ EL PRIMER CLICK
 
-        //se valida de qué lado estpa el mouse para voltear el caballo
-        if (distX > 0) {
-            this.horse.scale.setTo(1, 1);
-        } else {
-            this.horse.scale.setTo(-1, 1);
+        if (this.flagFirstMouseDown == true) {
+            //se reciben las coordenadas del mouse
+            var pointerX = game.input.x;
+            var pointerY = game.input.y;
+
+            var distX = pointerX - this.horse.x; //se resta la coordenada en x con la del caballo en x
+            var distY = pointerY - this.horse.y;
+
+            //se valida de qué lado estpa el mouse para voltear el caballo
+            if (distX > 0) {
+                this.horse.scale.setTo(1, 1);
+            } else {
+                this.horse.scale.setTo(-1, 1);
+            }
+
+            // MOVIMIENTO DEL CABALLO
+            // se suma la distancia del mouse y se asigna a la del caballo para movero
+            // se porcentualiza para que no sea un movimiento brusco
+            this.horse.x += distX * 0.02;
+            this.horse.y += distY * 0.02;
         }
-
-        // MOVIMIENTO DEL CABALLO
-        // se suma la distancia del mouse y se asigna a la del caballo para movero
-        // se porcentualiza para que no sea un movimiento bruzco
-        this.horse.x += distX * 0.02;
-        this.horse.y += distY * 0.02;
     }
 };
 
