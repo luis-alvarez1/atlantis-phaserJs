@@ -1,4 +1,4 @@
-var cant_diamnates = 30; //cantidad de diamantes en la pantalla
+var cant_diamantes = 30; //cantidad de diamantes en la pantalla
 GamePlayManager = {
     init: function() {
         //instruccion para que la pantalla tome las domensiones actuales
@@ -24,7 +24,7 @@ GamePlayManager = {
         this.horse.x = game.width / 2;
         this.horse.y = game.height / 2;
 
-        //se define el centro en el centro de la imagen (x,y)
+        //se define el punto de apoyo en el centro de la imagen (x,y)
         this.horse.anchor.setTo(0.5);
 
         //alpha -> opacidad (x>0, x<1)
@@ -33,9 +33,9 @@ GamePlayManager = {
 
         this.diamonds = []; //array de diamantes
 
-        for (var i = 0; i < cant_diamates; i++) {
+        for (var i = 0; i < cant_diamantes; i++) {
             //(x,y,'id')
-            var diamond = game.add.sprite(100, 100, 'diamonts'); // se agregan a la pantalla
+            var diamond = game.add.sprite(100, 100, 'diamonds'); // se agregan a la pantalla
 
             diamond.frame = game.rnd.integerInRange(0, 3); //se le da una img al azar entre 0 y 4
             //frac devuelve un numero entre 0 y 1
