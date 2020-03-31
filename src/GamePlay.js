@@ -28,8 +28,14 @@ GamePlayManager = {
         var pointerX = game.input.x;
         var pointerY = game.input.y;
 
-        console.log('x: ' + pointerX);
-        console.log('y: ' + pointerY);
+        var distX = pointerX - this.horse.x; //se resta la coordenada en x con la del caballo en x
+        var distY = pointerY - this.horse.y;
+
+        if (distX > 0) {
+            this.horse.scale.setTo(1, 1);
+        } else {
+            this.horse.scale.setTo(-1, 1)
+        }
     }
 };
 
