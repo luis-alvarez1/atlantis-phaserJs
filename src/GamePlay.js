@@ -96,7 +96,14 @@ GamePlayManager = {
         }
         return false;
     },
+    getBoundsHorse: function() {
+        var x0 = this.horse.x - (this.horse.width / 2);
+        var y0 = this.horse.y - (this.horse.height / 2);
+        var width = this.horse.widht;
+        var height = this.horse.height;
 
+        return new Phaser.Rectangle(x0, y0, width, height);
+    },
     update: function() {
 
         //SOLO SE EJECUTA EL CODIGO SI SE PRESIONÓ EL PRIMER CLICK
@@ -121,6 +128,12 @@ GamePlayManager = {
             // se porcentualiza para que no sea un movimiento brusco
             this.horse.x += distX * 0.02;
             this.horse.y += distY * 0.02;
+
+            for (var i = 0; i < cant_diamantes; i++) {
+                var rectHorse = this.getBoundsHorse();
+                var rectDiamond = this.getBounds(this.diamonds[i]);
+
+            }
         }
     }
 };
