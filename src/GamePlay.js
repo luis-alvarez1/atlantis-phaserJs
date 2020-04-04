@@ -35,7 +35,7 @@ GamePlayManager = {
 
         this.diamonds = []; //array de diamantes
 
-        for (var i = 0; i < cant_diamantes; i++) {
+        for (let i = 0; i < cant_diamantes; i++) {
             //(x,y,'id')
             var diamond = game.add.sprite(100, 100, 'diamonds'); // se agregan a la pantalla
 
@@ -65,7 +65,39 @@ GamePlayManager = {
             }
         }
 
-        this.explosion = game.add.sprite(100, 100, 'explosion'); //se agrega la imagen de explosion
+        // se agrega un grupo
+        this.explosionGroup = game.add.group();
+
+        // var ex1 = this.explosionGroup.create(200, 200, 'explosion');
+        // var ex2 = this.explosionGroup.create(400, 200, 'explosion');
+        // this.explosionGroup.scale.setTo(0.5);
+        // los grupos contienen sprites y estos pueden ser pedidos y cuando son usados
+        // se vuelven a dejar como disponibles
+
+        //se liberan los sprites
+        // ex1.kill();
+
+        // var newExplosion = this.explosionGroup.getFirstDead();
+        // console.log(newExplosion);
+
+        // se añaden 10 elementos al grupo 
+
+        for (let i = 0; i < 10; i++) {
+            this.explosion = this.explosionGroup.create(100, 100, 'explosion'); //se agrega la imagen de explosion (grupo)
+            this.explosion.tweenScale = game.add.tween(this.explosion.scale).to({
+                x: [0.4, 0.8, 0.4],
+                y: [0.4, 0.8, 0.4]
+
+            }, 600, Phaser.Easing.Exponential.Out, false, 0, 0, false);
+
+            this.explosion.tweenAlpha = game.add.tween(this.explosion).to({
+                alpha: [1, 0.6, 0]
+            }, 600, Phaser.Easing.Exponential.Out, false, 0, 0, false);
+
+            this.explosion.anchor.setTo(0.5);
+            this.explosion.kill();
+
+        }
 
         this.explosion.tweenScale = game.add.tween(this.explosion.scale).to({
             x: [0.4, 0.8, 0.4],
@@ -166,11 +198,22 @@ GamePlayManager = {
                 if (this.diamonds[i].visible && this.isRectangleOverlapping(rectHorse, rectDiamond)) {
                     this.diamonds[i].visible = false;
 
-                    this.explosion.visible = true;
-                    this.explosion.x = this.diamonds[i].x;
-                    this.explosion.y = this.diamonds[i].y;
-                    this.explosion.tweenScale.start();
-                    this.explosion.tweenAlpha.start();
+
+                    var explosion = this.explosionGroup.getFirstDead();
+
+                    if (explosion != null) {
+
+                        explosion.reset(this.diamonds[i].x, this.diamonds[i].y);
+                        explosion.tweenScale.start();
+                        explosion.tweenAlpha.start();
+
+                        // se llama esta funcion de phaser para que los tweens siempre
+                        // esten disponibles al completar la animacion.
+                        // OJO: solo es necesario hacerlo con un tween
+                        explosion.tweenAlpha.onComplete.add(function(currentTarget, currentTween) {
+                            currentTarget.kill();
+                        }, this);
+                    }
                 }
 
             }
