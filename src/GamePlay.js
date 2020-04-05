@@ -9,7 +9,7 @@ GamePlayManager = {
 
         //variable que controla el movimiento y el inicio
         this.flagFirstMouseDown = false;
-
+        this.endGame = false;
         this.amountDiamondsCaught = 0;
     },
     preload: function() {
@@ -214,7 +214,7 @@ GamePlayManager = {
 
         //SOLO SE EJECUTA EL CODIGO SI SE PRESIONÓ EL PRIMER CLICK
 
-        if (this.flagFirstMouseDown == true) {
+        if (this.flagFirstMouseDown == true && !this.endGame) {
             //se reciben las coordenadas del mouse
             var pointerX = game.input.x;
             var pointerY = game.input.y;
