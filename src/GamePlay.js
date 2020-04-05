@@ -1,6 +1,7 @@
 var cant_diamantes = 30; //cantidad de diamantes en la pantalla
 GamePlayManager = {
     init: function() {
+
         //instruccion para que la pantalla tome las dimensiones actuales
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.scale.pageAlignHorizontally = true;
@@ -8,6 +9,8 @@ GamePlayManager = {
 
         //variable que controla el movimiento y el inicio
         this.flagFirstMouseDown = false;
+
+        this.amountDiamondsCaught = 0;
     },
     preload: function() {
         game.load.image('background', 'assets/images/background.png'); //se carga una imagen
@@ -66,7 +69,6 @@ GamePlayManager = {
         }
 
         // se agrega un grupo
-        this.explosionGroup = game.add.group();
 
         // var ex1 = this.explosionGroup.create(200, 200, 'explosion');
         // var ex2 = this.explosionGroup.create(400, 200, 'explosion');
@@ -80,8 +82,9 @@ GamePlayManager = {
         // var newExplosion = this.explosionGroup.getFirstDead();
         // console.log(newExplosion);
 
-        // se añaden 10 elementos al grupo 
+        // se añaden 10 elementos al grupo
 
+        this.explosionGroup = game.add.group();
         for (let i = 0; i < 10; i++) {
             this.explosion = this.explosionGroup.create(100, 100, 'explosion'); //se agrega la imagen de explosion (grupo)
             this.explosion.tweenScale = game.add.tween(this.explosion.scale).to({
@@ -98,6 +101,19 @@ GamePlayManager = {
             this.explosion.kill();
 
         }
+
+        this.currentScore = 0;
+        var style = {
+            font: 'bold 30pt Arial',
+            fill: '#FFFFFF',
+            align: 'center'
+        };
+
+        this.scoreText = game.add.text(game.width / 2, 40, '0', style);
+
+        this.scoreText.anchor.setTo(0.5);
+
+
 
         this.explosion.tweenScale = game.add.tween(this.explosion.scale).to({
             x: [0.4, 0.8, 0.4],
@@ -117,6 +133,34 @@ GamePlayManager = {
         //(pos{x,y}, time, Easing)
         // tween.to({ x: 500, y: 100 }, 1500, Phaser.Easing.Exponential.Out);
         // tween.start(); //se inicia el tween
+    },
+
+    increaseScore: function() {
+        this.currentScore += 100;
+        this.scoreText.text = this.currentScore;
+        this.amountDiamondsCaught++;
+        if (this.amountDiamondsCaught >= cant_diamantes) {
+            this.endGame = true;
+            this.showFinalMessage('CONGRATULATIONS');
+        }
+
+    },
+    showFinalMessage: function(msg) {
+        var bgAlpha = game.add.bitmapData(game.width, game.height);
+        bgAlpha.ctx.fillStyle = '#000000';
+        bgAlpha.ctx.fillRect(0, 0, game.width, game.height);
+
+        var bg = game.add.sprite(0, 0, bgAlpha);
+        bg.alpha = 0.5;
+
+        var style = {
+            font: 'bold 60pt Arial',
+            fill: '#FFFFFF',
+            align: 'center'
+        }
+
+        this.textFieldFinalMsg = game.add.text(game.width / 2, game.height / 2, msg, style);
+        this.textFieldFinalMsg.anchor.setTo(0.5);
     },
     //funcion que se llama al primer click
     onTap: function() {
@@ -198,7 +242,7 @@ GamePlayManager = {
                 if (this.diamonds[i].visible && this.isRectangleOverlapping(rectHorse, rectDiamond)) {
                     this.diamonds[i].visible = false;
 
-
+                    this.increaseScore();
                     var explosion = this.explosionGroup.getFirstDead();
 
                     if (explosion != null) {
