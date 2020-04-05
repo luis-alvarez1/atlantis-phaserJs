@@ -19,9 +19,17 @@ GamePlayManager = {
         //('id','ruta',largo,ancho,#imagenes)
         game.load.spritesheet('horse', 'assets/images/horse.png', 84, 156, 2);
         game.load.spritesheet('diamonds', 'assets/images/diamonds.png', 81, 84, 4);
+        game.load.image('shark', 'assets/images/shark.png');
+        game.load.image('fishes', 'assets/images/fishes.png');
+        game.load.image('mollusk', 'assets/images/mollusk.png');
+
     },
     create: function() {
         game.add.sprite(0, 0, 'background'); // se añade la imagen
+
+        this.mollusk = game.add.sprite(500, 150, 'mollusk');
+        this.shark = game.add.sprite(500, 20, 'shark');
+        this.fishes = game.add.sprite(100, 550, 'fishes');
         this.horse = game.add.sprite(0, 0, 'horse'); //añade caballo
         this.horse.frame = 1; //se utiiza el segundo caballo
 
@@ -113,6 +121,22 @@ GamePlayManager = {
 
         this.scoreText.anchor.setTo(0.5);
 
+        this.totaltime = 20;
+        this.timerText = game.add.text(1000, 40, this.totaltime + '', style);
+        this.timerText.anchor.setTo(0.5);
+
+        this.timerGmerOver = game.time.events.loop(Phaser.Timer.SECOND, () => {
+            if (this.flagFirstMouseDown) {
+                this.totaltime--;
+                this.timerText.text = this.totaltime + '';
+                if (this.totaltime <= 0) {
+                    game.time.events.remove(this.timerGmerOver);
+                    this.endGame = true;
+                    this.showFinalMessage('GAME OVER');
+                }
+
+            }
+        }, this);
 
 
         this.explosion.tweenScale = game.add.tween(this.explosion.scale).to({
@@ -133,6 +157,7 @@ GamePlayManager = {
         //(pos{x,y}, time, Easing)
         // tween.to({ x: 500, y: 100 }, 1500, Phaser.Easing.Exponential.Out);
         // tween.start(); //se inicia el tween
+
     },
 
     increaseScore: function() {
@@ -140,12 +165,14 @@ GamePlayManager = {
         this.scoreText.text = this.currentScore;
         this.amountDiamondsCaught++;
         if (this.amountDiamondsCaught >= cant_diamantes) {
+            game.time.events.remove(this.timerGmerOver);
             this.endGame = true;
             this.showFinalMessage('CONGRATULATIONS');
         }
 
     },
     showFinalMessage: function(msg) {
+        this.tweenMollusk.stop();
         var bgAlpha = game.add.bitmapData(game.width, game.height);
         bgAlpha.ctx.fillStyle = '#000000';
         bgAlpha.ctx.fillRect(0, 0, game.width, game.height);
@@ -157,13 +184,19 @@ GamePlayManager = {
             font: 'bold 60pt Arial',
             fill: '#FFFFFF',
             align: 'center'
-        }
+        };
 
         this.textFieldFinalMsg = game.add.text(game.width / 2, game.height / 2, msg, style);
         this.textFieldFinalMsg.anchor.setTo(0.5);
     },
     //funcion que se llama al primer click
     onTap: function() {
+        if (!this.flagFirstMouseDown) {
+
+            this.tweenMollusk = game.add.tween(this.mollusk.position).to({ y: -0.001 },
+                5800, Phaser.Easing.Cubic.InOut, true, 0, 1000, true).loop(true);
+
+        }
 
         this.flagFirstMouseDown = true; //se cambia el valor del flag para ejecutar el juego
     },
@@ -215,6 +248,18 @@ GamePlayManager = {
         //SOLO SE EJECUTA EL CODIGO SI SE PRESIONÓ EL PRIMER CLICK
 
         if (this.flagFirstMouseDown == true && !this.endGame) {
+
+            //movimiento del tiburon
+            this.shark.x--;
+            if (this.shark.x < -300) {
+                this.shark.x = 1300;
+            }
+
+            //movimiento de los peces
+            this.fishes.x += 0.3;
+            if (this.fishes.x > 1300) {
+                this.fishes.x = -300;
+            }
             //se reciben las coordenadas del mouse
             var pointerX = game.input.x;
             var pointerY = game.input.y;
@@ -222,7 +267,7 @@ GamePlayManager = {
             var distX = pointerX - this.horse.x; //se resta la coordenada en x con la del caballo en x
             var distY = pointerY - this.horse.y;
 
-            //se valida de qué lado estpa el mouse para voltear el caballo
+            //se valida de qué lado está el mouse para voltear el caballo
             if (distX > 0) {
                 this.horse.scale.setTo(1, 1);
             } else {
