@@ -1,4 +1,5 @@
 var cant_diamantes = 30; //cantidad de diamantes en la pantalla
+var cant_boobles = 30;
 GamePlayManager = {
     init: function() {
 
@@ -23,9 +24,28 @@ GamePlayManager = {
         game.load.image('fishes', 'assets/images/fishes.png');
         game.load.image('mollusk', 'assets/images/mollusk.png');
 
+        game.load.image('booble1', 'assets/images/booble1.png');
+        game.load.image('booble2', 'assets/images/booble2.png');
+
     },
     create: function() {
         game.add.sprite(0, 0, 'background'); // se añade la imagen
+
+        this.boobleArray = [];
+
+        for (var i = 0; i < cant_boobles; i++) {
+            var xBooble = game.rnd.integerInRange(1, 1140);
+            var yBooble = game.rnd.integerInRange(600, 950);
+
+            //burbuja atual
+            var booble = game.add.sprite(xBooble, yBooble, 'booble' + game.rnd.integerInRange(1, 2));
+
+            booble.vel = 0.2 + game.rnd.frac() * 2;
+            booble.alpha = 0.9;
+            booble.scale.setTo(0.2 + game.rnd.frac());
+
+            this.boobleArray[i] = booble;
+        }
 
         this.mollusk = game.add.sprite(500, 150, 'mollusk');
         this.shark = game.add.sprite(500, 20, 'shark');
@@ -249,6 +269,18 @@ GamePlayManager = {
 
         if (this.flagFirstMouseDown == true && !this.endGame) {
 
+            //animacion de burbujas
+            for (var i = 0; i < cant_boobles; i++) {
+                var booble = this.boobleArray[i];
+
+                booble.y -= booble.vel;
+
+                //si la burbuja se sale de la pantalla
+                if (booble.y < -50) {
+                    booble.y = 700;
+                    booble.x = game.rnd.integerInRange(1, 1140); // se mete en otro lugar
+                }
+            }
             //movimiento del tiburon
             this.shark.x--;
             if (this.shark.x < -300) {
@@ -280,7 +312,7 @@ GamePlayManager = {
             this.horse.x += distX * 0.02;
             this.horse.y += distY * 0.02;
 
-            for (var i = 0; i < cant_diamantes; i++) {
+            for (let i = 0; i < cant_diamantes; i++) {
                 var rectHorse = this.getBoundsHorse();
                 var rectDiamond = this.getBounds(this.diamonds[i]);
 
