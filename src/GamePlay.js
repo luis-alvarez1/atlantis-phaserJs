@@ -12,6 +12,7 @@ GamePlayManager = {
         this.flagFirstMouseDown = false;
         this.endGame = false;
         this.amountDiamondsCaught = 0;
+        this.closeEye = -1;
     },
     preload: function() {
         game.load.image('background', 'assets/images/background.png'); //se carga una imagen
@@ -51,7 +52,7 @@ GamePlayManager = {
         this.shark = game.add.sprite(500, 20, 'shark');
         this.fishes = game.add.sprite(100, 550, 'fishes');
         this.horse = game.add.sprite(0, 0, 'horse'); //añade caballo
-        this.horse.frame = 1; //se utiiza el segundo caballo
+        this.horse.frame = 0; //se utiiza el segundo caballo
 
         //se coloca en el medio
         this.horse.x = game.width / 2;
@@ -181,6 +182,9 @@ GamePlayManager = {
     },
 
     increaseScore: function() {
+        this.closeEye = 0;
+        this.horse.frame = 1;
+
         this.currentScore += 100;
         this.scoreText.text = this.currentScore;
         this.amountDiamondsCaught++;
@@ -279,6 +283,15 @@ GamePlayManager = {
                 if (booble.y < -50) {
                     booble.y = 700;
                     booble.x = game.rnd.integerInRange(1, 1140); // se mete en otro lugar
+                }
+            }
+
+            if (this.closeEye >= 0) {
+                this.closeEye++;
+
+                if (this.closeEye > 20) {
+                    this.closeEye = -1;
+                    this.horse.frame = 0;
                 }
             }
             //movimiento del tiburon
